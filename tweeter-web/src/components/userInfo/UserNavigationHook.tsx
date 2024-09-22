@@ -1,14 +1,12 @@
 import { AuthToken, FakeData, User } from "tweeter-shared";
-import { UserInfoContext } from "../userInfo/UserInfoProvider";
-import { useContext } from "react";
 import useToastListener from "../toaster/ToastListenerHook";
-import useUserInfo from "./UserHook";
+import useUserInfo from "./UserInfoHook";
 
-interface UserNavigationListener {
+interface UserNavigation {
     navigateToUser: (event: React.MouseEvent) => Promise<void>;
 }
 
-const useUserNavigationListener = (): UserNavigationListener => {
+const useUserNavigation = (): UserNavigation => {
     const { setDisplayedUser, currentUser, authToken } =
         useUserInfo();
     const { displayErrorMessage } = useToastListener();
@@ -51,4 +49,4 @@ const useUserNavigationListener = (): UserNavigationListener => {
     }
 }
 
-export default useUserNavigationListener;
+export default useUserNavigation;

@@ -1,6 +1,6 @@
 import { Context, createContext, useState } from "react";
 import { User, AuthToken } from "tweeter-shared";
-import useUserNavigationListener from "../userNavigation/UserListenerHook";
+import useUserNavigation from "./UserNavigationHook";
 
 const CURRENT_USER_KEY: string = "CurrentUserKey";
 const AUTH_TOKEN_KEY: string = "AuthTokenKey";
