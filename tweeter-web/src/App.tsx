@@ -47,10 +47,14 @@ const AuthenticatedRoutes = () => {
     <Routes>
       <Route element={<MainLayout />}>
         <Route index element={<Navigate to="/feed" />} />
-        <Route path="feed" element={<StatusItemScroller
+        <Route 
+        path="feed" 
+        element={<StatusItemScroller
           generatePresenter={(view: StatusItemView) => new FeedPresenter(view)}
         />} />
-        <Route path="story" element={<StatusItemScroller
+        <Route 
+        path="story" 
+        element={<StatusItemScroller
           generatePresenter={(view: StatusItemView) => new StoryPresenter(view)}
         />} />
         <Route

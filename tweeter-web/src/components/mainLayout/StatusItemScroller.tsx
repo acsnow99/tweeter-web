@@ -18,9 +18,6 @@ const StatusItemScroller = (props: Props) => {
     const [newItems, setNewItems] = useState<Status[]>([]);
     const [changedDisplayedUser, setChangedDisplayedUser] = useState(true);
   
-    const addItems = (newItems: Status[]) =>
-      setNewItems(newItems);
-  
     const { displayedUser, setDisplayedUser, currentUser, authToken } =
       useContext(UserInfoContext);
   
@@ -41,6 +38,7 @@ const StatusItemScroller = (props: Props) => {
       if(newItems) {
         setItems([...items, ...newItems]);
       }
+      console.log("New Items");
     }, [newItems])
   
     const reset = async () => {
@@ -48,6 +46,7 @@ const StatusItemScroller = (props: Props) => {
       setNewItems([]);
       presenter.reset();
       setChangedDisplayedUser(true);
+      console.log("Resetting");
     }
   
     const showMoreItems = async () => {
@@ -56,7 +55,8 @@ const StatusItemScroller = (props: Props) => {
     };
 
     const view: StatusItemView = {
-      addItems: addItems,
+      addItems: (newItems: Status[]) =>
+        setNewItems(newItems),
       displayErrorMessage: displayErrorMessage,
     }
     const [presenter] = useState(generatePresenter(view));
