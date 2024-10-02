@@ -17,9 +17,9 @@ import StatusItemScroller from "./components/mainLayout/StatusItemScroller";
 import { FolloweePresenter } from "./presenters/FolloweePresenter";
 import { UserItemView } from "./presenters/UserItemPresenter";
 import { FollowerPresenter } from "./presenters/FollowerPresenter";
-import { AuthToken, FakeData, Status } from "tweeter-shared";
 import { StatusItemView } from "./presenters/StatusItemPresenter";
 import { FeedPresenter } from "./presenters/FeedPresenter";
+import { StoryPresenter } from "./presenters/StoryPresenter";
 
 const App = () => {
   const { currentUser, authToken } = useContext(UserInfoContext);
@@ -43,15 +43,6 @@ const App = () => {
 };
 
 const AuthenticatedRoutes = () => {
-
-  const generateFeedErrorMessage = () => {
-    return "Failed to load feed items because of exception";
-  }
-
-  const generateStoryErrorMessage = () => {
-    return "Failed to load story items because of exception";
-  }
-
   return (
     <Routes>
       <Route element={<MainLayout />}>
@@ -60,7 +51,7 @@ const AuthenticatedRoutes = () => {
           generatePresenter={(view: StatusItemView) => new FeedPresenter(view)}
         />} />
         <Route path="story" element={<StatusItemScroller
-          generatePresenter={(view: StatusItemView) => new FeedPresenter(view)}
+          generatePresenter={(view: StatusItemView) => new StoryPresenter(view)}
         />} />
         <Route
           path="followees"
