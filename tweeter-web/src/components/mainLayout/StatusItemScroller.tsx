@@ -1,30 +1,21 @@
 import { useContext } from "react";
 import { UserInfoContext } from "../userInfo/UserInfoProvider";
-import { AuthToken, FakeData, Status, User } from "tweeter-shared";
+import { Status } from "tweeter-shared";
 import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import useToastListener from "../toaster/ToastListenerHook";
 import StatusItem from "../statusItem/StatusItem";
-
-export const PAGE_SIZE = 10;
+import { StatusItemPresenter, StatusItemView } from "../../presenters/StatusItemPresenter";
 
 interface Props {
-    defaultErrorMessage: string,
-    loadMoreItems: (
-        authToken: AuthToken,
-        userAlias: string,
-        pageSize: number,
-        lastItem: Status | null
-        ) => Promise<[Status[], boolean]>,
+    generatePresenter: (view: StatusItemView) => StatusItemPresenter,
 }
 
 const StatusItemScroller = (props: Props) => {
-    const { defaultErrorMessage, loadMoreItems } = props;
+    const { generatePresenter } = props;
     const { displayErrorMessage } = useToastListener();
     const [items, setItems] = useState<Status[]>([]);
     const [newItems, setNewItems] = useState<Status[]>([]);
-    const [hasMoreItems, setHasMoreItems] = useState(true);
-    const [lastItem, setLastItem] = useState<Status | null>(null);
     const [changedDisplayedUser, setChangedDisplayedUser] = useState(true);
   
     const addItems = (newItems: Status[]) =>
@@ -55,30 +46,20 @@ const StatusItemScroller = (props: Props) => {
     const reset = async () => {
       setItems([]);
       setNewItems([]);
-      setLastItem(null);
-      setHasMoreItems(true);
+      presenter.reset();
       setChangedDisplayedUser(true);
     }
   
     const showMoreItems = async () => {
-      try {
-        const [newItems, hasMore] = await loadMoreItems(
-          authToken!,
-          displayedUser!.alias,
-          PAGE_SIZE,
-          lastItem
-        );
-  
-        setHasMoreItems(hasMore);
-        setLastItem(newItems[newItems.length - 1]);
-        addItems(newItems);
-        setChangedDisplayedUser(false)
-      } catch (error) {
-        displayErrorMessage(
-          `${defaultErrorMessage}: ${error}`
-        );
-      }
+      presenter.showMoreItems(authToken!, displayedUser!.alias);
+      setChangedDisplayedUser(false);
     };
+
+    const view: StatusItemView = {
+      addItems: addItems,
+      displayErrorMessage: displayErrorMessage,
+    }
+    const [presenter] = useState(generatePresenter(view));
 
     return (
         <div className="container px-0 overflow-visible vh-100">
@@ -86,7 +67,7 @@ const StatusItemScroller = (props: Props) => {
             className="pr-0 mr-0"
             dataLength={items.length}
             next={showMoreItems}
-            hasMore={hasMoreItems}
+            hasMore={presenter.hasMoreItems}
             loader={<h4>Loading...</h4>}
           >
             {items.map((item, index) => (

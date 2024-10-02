@@ -18,6 +18,8 @@ import { FolloweePresenter } from "./presenters/FolloweePresenter";
 import { UserItemView } from "./presenters/UserItemPresenter";
 import { FollowerPresenter } from "./presenters/FollowerPresenter";
 import { AuthToken, FakeData, Status } from "tweeter-shared";
+import { StatusItemView } from "./presenters/StatusItemPresenter";
+import { FeedPresenter } from "./presenters/FeedPresenter";
 
 const App = () => {
   const { currentUser, authToken } = useContext(UserInfoContext);
@@ -42,26 +44,6 @@ const App = () => {
 
 const AuthenticatedRoutes = () => {
 
-  const loadMoreStoryItems = async (
-    authToken: AuthToken,
-    userAlias: string,
-    pageSize: number,
-    lastItem: Status | null
-  ): Promise<[Status[], boolean]> => {
-    // TODO: Replace with the result of calling server
-    return FakeData.instance.getPageOfStatuses(lastItem, pageSize);
-  };
-
-  const loadMoreFeedItems = async (
-    authToken: AuthToken,
-    userAlias: string,
-    pageSize: number,
-    lastItem: Status | null
-  ): Promise<[Status[], boolean]> => {
-    // TODO: Replace with the result of calling server
-    return FakeData.instance.getPageOfStatuses(lastItem, pageSize);
-  };
-
   const generateFeedErrorMessage = () => {
     return "Failed to load feed items because of exception";
   }
@@ -75,12 +57,10 @@ const AuthenticatedRoutes = () => {
       <Route element={<MainLayout />}>
         <Route index element={<Navigate to="/feed" />} />
         <Route path="feed" element={<StatusItemScroller
-          defaultErrorMessage={generateFeedErrorMessage()}
-          loadMoreItems={loadMoreFeedItems}
+          generatePresenter={(view: StatusItemView) => new FeedPresenter(view)}
         />} />
         <Route path="story" element={<StatusItemScroller
-          defaultErrorMessage={generateStoryErrorMessage()}
-          loadMoreItems={loadMoreStoryItems}
+          generatePresenter={(view: StatusItemView) => new FeedPresenter(view)}
         />} />
         <Route
           path="followees"
